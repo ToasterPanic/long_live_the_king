@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://djr0mcdl31ejb"]
+
+[ext_resource type="Texture2D" uid="uid://di8ywkbl1pjdx" path="res://textures/wallpapers/overenergized.png" id="1_8s7al"]
+[ext_resource type="Texture2D" uid="uid://wk0anmx3j8a8" path="res://textures/rooms/king.png" id="2_at4kb"]
+[ext_resource type="Script" uid="uid://bdryborc8bsfg" path="res://scripts/room_buy_button.gd" id="2_kw24j"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8s7al"]
+font_size = 32
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="RoomBuyButton" type="TextureButton"]
+custom_minimum_size = Vector2(128, 128)
+texture_normal = ExtResource("1_8s7al")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("2_kw24j")
+
+[node name="Room" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_at4kb")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+offset_right = 117.0
+offset_bottom = 45.0
+text = " $50"
+label_settings = SubResource("LabelSettings_8s7al")
+
+[connection signal="button_down" from="." to="." method="_on_button_down"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]
