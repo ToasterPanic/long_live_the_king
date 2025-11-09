@@ -1,13 +1,21 @@
-[gd_scene load_steps=10 format=4 uid="uid://caxp2b7ex8cv"]
+[gd_scene load_steps=17 format=4 uid="uid://caxp2b7ex8cv"]
 
 [ext_resource type="Script" uid="uid://b47mw1848x0om" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://c6mxq0nbt5wkt" path="res://textures/grass.png" id="2_iywne"]
-[ext_resource type="Texture2D" uid="uid://dwdg054ycxrnf" path="res://textures/room_base.png" id="3_p57ef"]
+[ext_resource type="Texture2D" uid="uid://cy004dl3uxk81" path="res://textures/tower_grass.png" id="3_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://l6ngi6rcjash" path="res://scenes/room.tscn" id="4_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://djr0mcdl31ejb" path="res://scenes/room_buy_button.tscn" id="5_iywne"]
+[ext_resource type="Texture2D" uid="uid://bj4xhrsgoxhfa" path="res://textures/selection_cursor.png" id="5_p57ef"]
+[ext_resource type="Texture2D" uid="uid://dgn1ls66p6sjl" path="res://textures/bell.png" id="7_u5sy4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 texture = ExtResource("2_iywne")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gee14"]
+texture = ExtResource("3_u5sy4")
 texture_region_size = Vector2i(256, 256)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
@@ -16,14 +24,38 @@ texture_region_size = Vector2i(256, 256)
 tile_size = Vector2i(256, 256)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_fc0e3")
+sources/1 = SubResource("TileSetAtlasSource_gee14")
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_lbhrr"]
-radius = 64.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p57ef"]
+bg_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+shadow_color = Color(0, 0, 0, 0.29411766)
+
+[sub_resource type="Theme" id="Theme_u5sy4"]
+Panel/styles/panel = SubResource("StyleBoxFlat_p57ef")
 
 [sub_resource type="LabelSettings" id="LabelSettings_iywne"]
 font_size = 64
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_gee14"]
+font_size = 48
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_u5sy4"]
+font_size = 32
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_u5sy4"]
+a = Vector2(960, 0)
+b = Vector2(-960, 0)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_lbhrr")
@@ -38,13 +70,21 @@ color = Color(0.3137255, 0.23921569, 0.09803922, 1)
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(3776, -3776)
 scale = Vector2(0.5, 0.5)
-tile_map_data = PackedByteArray("AAD//wIAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAAEAAIAAAAAAAAAAAD+/wIAAAAAAAAAAAD9/wIAAAAAAAAAAAD8/wIAAAAAAAAAAAD7/wIAAAAAAAAAAAD6/wIAAAAAAAAAAAD5/wIAAAAAAAAAAAD4/wIAAAAAAAAAAAD3/wIAAAAAAAAAAAD2/wIAAAAAAAAAAAD1/wIAAAAAAAAAAAD0/wIAAAAAAAAAAAAFAAIAAAAAAAAAAAAGAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAIAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAIAAAAAAAAAAAA=")
+tile_map_data = PackedByteArray("AAD//wIAAAAAAAAAAAAAAAIAAQAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAAEAAIAAAAAAAAAAAD+/wIAAAAAAAAAAAD9/wIAAAAAAAAAAAD8/wIAAAAAAAAAAAD7/wIAAAAAAAAAAAD6/wIAAAAAAAAAAAD5/wIAAAAAAAAAAAD4/wIAAAAAAAAAAAD3/wIAAAAAAAAAAAD2/wIAAAAAAAAAAAD1/wIAAAAAAAAAAAD0/wIAAAAAAAAAAAAFAAIAAAAAAAAAAAAGAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAIAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAIAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_7jktm")
 
 [node name="Rooms" type="Node2D" parent="."]
 
 [node name="King" parent="Rooms" instance=ExtResource("4_u5sy4")]
 position = Vector2(3840, -3584)
+
+[node name="SpawnLeft" type="Node2D" parent="."]
+position = Vector2(2215, -3552)
+
+[node name="SpawnRight" type="Node2D" parent="."]
+position = Vector2(5389, -3552)
+
+[node name="Enemies" type="Node2D" parent="."]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(3840, -3524)
@@ -55,22 +95,7 @@ position_smoothing_speed = 28.0
 modulate = Color(1, 1, 1, 0.5019608)
 position = Vector2(3840, -3840)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("3_p57ef")
-
-[node name="BelowCheck" type="Area2D" parent="Cursor"]
-position = Vector2(0, 256)
-collision_layer = 3
-collision_mask = 3
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Cursor/BelowCheck"]
-shape = SubResource("CircleShape2D_lbhrr")
-
-[node name="InsideCheck" type="Area2D" parent="Cursor"]
-collision_layer = 3
-collision_mask = 3
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Cursor/InsideCheck"]
-shape = SubResource("CircleShape2D_lbhrr")
+texture = ExtResource("5_p57ef")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -83,8 +108,36 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="Panel" type="Panel" parent="UI/Control"]
-custom_minimum_size = Vector2(1056, 160)
+[node name="RoomInfo" type="Panel" parent="UI/Control"]
+visible = false
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -128.0
+offset_right = 256.0
+offset_bottom = 128.0
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Label" type="RichTextLabel" parent="UI/Control/RoomInfo"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[font_size=32]Plain Spikes[/font_size]
+It's quite plain."
+
+[node name="Shop" type="Panel" parent="UI/Control"]
+custom_minimum_size = Vector2(556, 160)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -94,26 +147,42 @@ anchor_bottom = 1.0
 offset_top = -160.0
 grow_horizontal = 2
 grow_vertical = 0
+theme = SubResource("Theme_u5sy4")
 
-[node name="Scroll" type="ScrollContainer" parent="UI/Control/Panel"]
+[node name="Scroll" type="ScrollContainer" parent="UI/Control/Shop"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
 offset_top = 16.0
-offset_right = -272.0
+offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBox" type="HFlowContainer" parent="UI/Control/Panel/Scroll"]
+[node name="HBox" type="HBoxContainer" parent="UI/Control/Shop/Scroll"]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RoomBuyButton" parent="UI/Control/Panel/Scroll/HBox" instance=ExtResource("5_iywne")]
+[node name="RoomBuyButton" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RoomBuyButton2" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RoomBuyButton3" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RoomBuyButton4" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -130,3 +199,53 @@ grow_horizontal = 2
 text = "22 GOLD"
 label_settings = SubResource("LabelSettings_iywne")
 horizontal_alignment = 1
+
+[node name="StartWave" type="TextureButton" parent="UI/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.5, 0.5)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_u5sy4")
+
+[node name="Label" type="Label" parent="UI/Control/StartWave"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "START WAVE"
+label_settings = SubResource("LabelSettings_gee14")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HintText" type="Label" parent="UI/Control/StartWave"]
+custom_minimum_size = Vector2(512, 256)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 256.0
+offset_top = -63.5
+offset_right = 1.0
+offset_bottom = 63.5
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_u5sy4")
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Blocker" type="Area2D" parent="."]
+position = Vector2(2768, -3692)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Blocker"]
+shape = SubResource("SegmentShape2D_u5sy4")
+
+[node name="Blocker2" type="Area2D" parent="."]
+position = Vector2(4897, -3692)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Blocker2"]
+shape = SubResource("SegmentShape2D_u5sy4")
+
+[connection signal="pressed" from="UI/Control/StartWave" to="." method="_on_start_wave_pressed"]

@@ -21,6 +21,10 @@ func _ready() -> void:
 	texture_normal = load("res://textures/wallpapers/" + wallpaper + ".png")
 	$Room.texture = load("res://textures/rooms/" + room + ".png")
 	
+	cost = global.room_stats[room].shop_cost + global.wallpaper_stats[wallpaper].shop_cost
+	
+	$Label.text = " $" + str(cost)
+	
 	var found = false
 	
 	game = get_parent()
@@ -49,6 +53,7 @@ func _on_button_down() -> void:
 		var new_room = game.new_room()
 		#new_room.wallpaper = wallpaper
 		new_room.room = room
+		new_room.wallpaper = wallpaper
 		new_room.initialize()
 		game.selection_mode = game.SELECTION_MODE_GRAB
 		game.selected_room = new_room
