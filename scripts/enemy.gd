@@ -6,12 +6,20 @@ var clock = 0
 
 var speed = 128
 var health = 1
-var damage_multipliers = {
-	"blunt": 1,
-	"burn": 1,
-	"magic": 1
-}
+var damage_vulnerability = "none"
 @onready var game = get_parent().get_parent()
+
+func set_vulnerability(vuln: String):
+	damage_vulnerability = vuln
+	if vuln == "none":
+		$Vulnerability.visible = false
+	else:
+		$Vulnerability.visible = true
+		$Vulnerability.texture = load("res://textures/particles/"+ vuln +"_particle.png")
+
+func _ready() -> void:
+	$AboveCheck.position.x *= direction
+	set_vulnerability(damage_vulnerability)
 
 func _process(delta: float) -> void:
 	clock += delta
@@ -36,7 +44,7 @@ func _process(delta: float) -> void:
 		
 		for n in $InsideCheck.get_overlapping_areas():
 			if (n.get_name() == "Area") and (n.get_parent().get_name() == "King"):
-				game.gold -= 5
+				game.gold -= 1
 				queue_free()
 	
 	move_and_slide()

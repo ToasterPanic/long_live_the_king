@@ -1,7 +1,7 @@
 extends Node2D
 
 var camera_speed = 512
-var gold = 6
+var gold = 9
 var next_spawn = 1
 var wave = 1
 var current_wave_spawned = 0
@@ -10,10 +10,7 @@ var tower_invalid = false
 var failures = []
 var clock = 0
 
-#- Tower must be in the center
-#- Rooms must be supported below
-#- Rooms cannot be inside each other
-#- Rooms cannot be underground
+var mouse_busy = false
 
 const SELECTION_MODE_DEFAULT = 0
 const SELECTION_MODE_GRAB = 1
@@ -23,6 +20,7 @@ var selection_mode = SELECTION_MODE_DEFAULT
 var time_selection_clicked = 0
 
 var room_buy_button_scene = preload("res://scenes/room_buy_button.tscn")
+var charm_buy_button_scene = preload("res://scenes/charm_buy_button.tscn")
 var room_scene = preload("res://scenes/room.tscn")
 var enemy_scene = preload("res://scenes/enemy.tscn")
 
@@ -39,6 +37,8 @@ func new_room():
 	
 	return room
 
+# This was made at a point where room selection worked differently. This is mostly
+# unneccesary but I've kept it in because I am too lazy
 func set_selected_room(new):
 	if selected_room:
 		if selected_room.invalid:
@@ -50,20 +50,37 @@ func set_selected_room(new):
 	new.modulate = Color(1.2, 1.2, 1.2, 1)
 	
 # Checks if the currently-selected room (at the cursor) is valid.
-func is_valid_room_position(room):
+func is_valid_room_position(room, info = false):
 	LimboConsole.info(room.get_name())
+	
+	if room.get_name() != "King":
+		if room.position.y < $Rooms/King.position.y:
+			LimboConsole.info("Failed KingTop")
+			if info:
+				return "KingTop"
+			else:
+				return false
 	
 	for n in room.get_node("InsideCheck").get_overlapping_areas():
 		if n.get_name() == "Area":
 			if n.get_parent() != room:
 				LimboConsole.info("Failed InsideCheck")
-				return false
+				if info:
+					return "InsideCheck"
+				else:
+					return false
 		if n.get_name() == "Blocker":
 			LimboConsole.info("Failed Blocker")
-			return false
+			if info:
+				return "Blocker"
+			else:
+				return false
 		if n.get_name() == "Blocker2":
 			LimboConsole.info("Failed Blocker2")
-			return false
+			if info:
+				return "Blocker"
+			else:
+				return false
 			
 	for n in room.get_node("BelowCheck").get_overlapping_bodies():
 		if n.get_name() == "TileMapLayer":
@@ -77,14 +94,20 @@ func is_valid_room_position(room):
 			
 	LimboConsole.info("Failed All")
 			
-	return false
+	if info:
+		return "NeedsSupport"
+	else:
+		return false
 
 func scramble_shop():
-	for n in $UI/Control/Shop/Scroll/HBox.get_children(): n.queue_free()
+	for n in $UI/Control/Shop/Scroll/HBox/Rooms.get_children(): n.queue_free()
+	for n in $UI/Control/Shop/Scroll/HBox/Charms.get_children(): n.queue_free()
 	
-	# The loot tables for rooms and their wallpapers are recalculated every round for reasons
+	# The loot tables are recalculated every round
+	# This is so we can filter out items that are too early in
 	var room_randomized_table = []
 	var wallpaper_randomized_table = []
+	var charm_randomized_table = []
 	
 	for n in global.room_stats.keys():
 		var room = global.room_stats[n]
@@ -113,15 +136,39 @@ func scramble_shop():
 			wallpaper_randomized_table.push_front(n)
 			
 			i += 1
+			
+	for n in global.charm_stats.keys():
+		var charm = global.charm_stats[n]
+		
+		# Ignore charms that are too early to appear
+		if charm.has("starting_wave") and (charm.starting_wave < wave):
+			continue
+		
+		# Add room to loot table a certain amount of times
+		var i = 0
+		while i < charm.shop_rarity:
+			charm_randomized_table.push_front(n)
+			
+			i += 1
 	
 	var i = 0
-	while i < 4:
+	while i < 3:
 		var room_buy_button = room_buy_button_scene.instantiate()
 		
 		room_buy_button.room = room_randomized_table[randi_range(0, room_randomized_table.size() - 1)]
 		room_buy_button.wallpaper = wallpaper_randomized_table[randi_range(0, wallpaper_randomized_table.size() - 1)]
 		
-		$UI/Control/Shop/Scroll/HBox.add_child(room_buy_button)
+		$UI/Control/Shop/Scroll/HBox/Rooms.add_child(room_buy_button)
+		
+		i += 1
+		
+	i = 0
+	while i < 2:
+		var charm_buy_button = charm_buy_button_scene.instantiate()
+		
+		charm_buy_button.charm = charm_randomized_table[randi_range(0, charm_randomized_table.size() - 1)]
+
+		$UI/Control/Shop/Scroll/HBox/Charms.add_child(charm_buy_button)
 		
 		i += 1
 
@@ -152,6 +199,7 @@ func _process(delta: float) -> void:
 		for n in $Rooms.get_children():
 			if n.hovered:
 				set_selected_room(n)
+				$PickUp.play()
 	elif Input.is_action_pressed("select"):
 		if selection_mode == SELECTION_MODE_GRAB:
 			selected_room.get_node("Room").rotation_degrees = sin(clock * 12) * 15
@@ -171,11 +219,17 @@ func _process(delta: float) -> void:
 				
 				tower_invalid = false
 				
+				failures = []
+				
 				for n in $Rooms.get_children():
-					n.invalid = !is_valid_room_position(n)
+					var check = is_valid_room_position(n, true)
+					n.invalid = typeof(check) != typeof(false)
+					
 					if n.invalid:
 						n.modulate = Color(1, 0.4, 0.4, 1)
 						tower_invalid = true
+						
+						failures.push_front(check)
 					else:
 						n.modulate = Color(1.4, 1.4, 1.4, 1)
 				
@@ -194,6 +248,8 @@ func _process(delta: float) -> void:
 			
 			if selection_mode == SELECTION_MODE_GRAB:
 				selection_mode = SELECTION_MODE_DEFAULT
+				$PickUp.stop()
+				$Place.play()
 			else:
 				if selected_room.invalid:
 					selected_room.modulate = Color(1, 0.2, 0.2, 1)
@@ -207,12 +263,25 @@ func _process(delta: float) -> void:
 	if tower_invalid:
 		$UI/Control/StartWave/Label.text = "TOWER INVALID"
 		$UI/Control/StartWave.modulate = Color(.5, .5, .5)
+		
+		$UI/Control/StartWave/HintText.text = ""
+		if failures.has("RoomBought"):
+			$UI/Control/StartWave/HintText.text = $UI/Control/StartWave/HintText.text + "- Please move your recently-bought room\n"
+		if failures.has("InsideCheck"):
+			$UI/Control/StartWave/HintText.text = $UI/Control/StartWave/HintText.text + "- Rooms cannot be inside each other\n"
+		if failures.has("NeedsSupport"):
+			$UI/Control/StartWave/HintText.text = $UI/Control/StartWave/HintText.text + "- Rooms must be supported and above ground\n"
+		if failures.has("Blocker"):
+			$UI/Control/StartWave/HintText.text = $UI/Control/StartWave/HintText.text + "- Tower must be in the center\n"
+		if failures.has("KingTop"):
+			$UI/Control/StartWave/HintText.text = $UI/Control/StartWave/HintText.text + "- The king must be at the top of the tower\n"
 	elif active_wave:
 		$UI/Control/StartWave/Label.text = "WAVE IN PROGRESS"
 		$UI/Control/StartWave.modulate = Color(.5, .5, .5)
 	else:
 		$UI/Control/StartWave/Label.text = "START WAVE"
 		$UI/Control/StartWave.modulate = Color(1, 1, 1)
+		$UI/Control/StartWave/HintText.text = ""
 		
 	next_spawn -= delta 
 	
@@ -239,15 +308,24 @@ func _process(delta: float) -> void:
 			current_wave_spawned += 1
 			
 			var enemy = enemy_scene.instantiate()
-			$Enemies.add_child(enemy)
+			
+			
+			if randi_range(0, 1) == 1:
+				enemy.direction = 1
+				enemy.position = $SpawnLeft.position
+			else:
+				enemy.direction = -1
+				enemy.position = $SpawnRight.position
 			
 			# No idea how to square a float. Don't feel like figuring it out
-			var unsquared = (((wave - 1) + 4.5) / 4.5)
+			var unsquared = (((wave - 1) + 1.25) / 1.25)
 			var multiplier = unsquared * unsquared
 			
 			enemy.health = 1 * multiplier
 			
-			enemy.position = $SpawnLeft.position
+			
+			
+			$Enemies.add_child(enemy)
 
 
 func _input(event: InputEvent) -> void:
@@ -260,3 +338,19 @@ func _input(event: InputEvent) -> void:
 func _on_start_wave_pressed() -> void:
 	if (not active_wave) and (not tower_invalid):
 		active_wave = true
+
+
+func _on_main_menu_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_restart_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_shop_mouse_entered() -> void:
+	mouse_busy = true
+
+
+func _on_shop_mouse_exited() -> void:
+	mouse_busy = false

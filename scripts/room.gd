@@ -28,6 +28,17 @@ func _process(delta: float) -> void:
 	
 	for n in $Area.get_overlapping_bodies():
 		if n.get_parent().get_name() == "Enemies":
+			var damage_type = room_stats.damage_type
 			var damage = room_stats.damage
+			
+			if wallpaper == "grimy":
+				damage *= 1.5
+				damage_type = "blunt"
+			elif wallpaper == "firey":
+				damage *= 1.5
+				damage_type = "fire" 
+			elif wallpaper == "supernatural":
+				damage *= 1.5
+				damage_type = "magic"
 			
 			n.health -= delta * damage

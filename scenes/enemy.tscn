@@ -1,7 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://cm5cfsj0qni8q"]
+[gd_scene load_steps=9 format=3 uid="uid://cm5cfsj0qni8q"]
 
 [ext_resource type="Script" uid="uid://rxe241hjmi36" path="res://scripts/enemy.gd" id="1_md0e3"]
+[ext_resource type="Texture2D" uid="uid://t88b0qra8lo8" path="res://textures/particles/blunt_particle.png" id="2_4ra3w"]
 [ext_resource type="Texture2D" uid="uid://bdbjq37rr7sh1" path="res://textures/enemies/peasant.png" id="2_md0e3"]
+
+[sub_resource type="Curve" id="Curve_5uy6h"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.6515152, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_c4w8v"]
+curve = SubResource("Curve_5uy6h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xwavj"]
+particle_flag_disable_z = true
+angle_min = -720.0
+angle_max = 720.0
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_min = 32.0
+initial_velocity_max = 64.0
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_c4w8v")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_iywne"]
 radius = 32.0
@@ -14,6 +33,10 @@ collision_layer = 4
 collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_md0e3")
+
+[node name="Vulnerability" type="GPUParticles2D" parent="."]
+texture = ExtResource("2_4ra3w")
+process_material = SubResource("ParticleProcessMaterial_xwavj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_iywne")

@@ -1,8 +1,7 @@
 extends TextureButton
 
 
-var wallpaper = "plain"
-var room = "spikes"
+var charm = "gold"
 var cost = 5
 var game = null
 var bought = false
@@ -18,10 +17,9 @@ func _on_mouse_exited() -> void:
 func _ready() -> void:
 	$Label.text = " $" + str(cost)
 
-	texture_normal = load("res://textures/wallpapers/" + wallpaper + ".png")
-	$Room.texture = load("res://textures/rooms/" + room + ".png")
+	texture_normal = load("res://textures/charms/" + charm + ".png")
 	
-	cost = global.room_stats[room].shop_cost + global.wallpaper_stats[wallpaper].shop_cost
+	cost = global.charm_stats[charm].shop_cost 
 	
 	$Label.text = " $" + str(cost)
 	
@@ -39,7 +37,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if bought:
 		modulate = Color(0.2, 0.2, 0.2)
-		$Room.visible = false
 		$Label.text = " SOLD!"
 	elif hovered:
 		modulate = Color(1.25, 1.25, 1.25)
@@ -51,18 +48,6 @@ func _on_button_down() -> void:
 		game.gold -= cost
 		
 		$Buy.play()
-		
-		var new_room = game.new_room()
-		#new_room.wallpaper = wallpaper
-		new_room.room = room
-		new_room.wallpaper = wallpaper
-		new_room.initialize()
-		new_room.position = Vector2(3230.0, -3855)
-		new_room.modulate = Color(0, 1, 0, 1)
-		
-		game.selected_room = new_room
-		game.tower_invalid = true
-		game.failures.push_front("RoomBought")
 		
 		bought = true
 		cost = INF

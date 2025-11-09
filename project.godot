@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="Long Live The King"
-run/main_scene="uid://caxp2b7ex8cv"
+run/main_scene="uid://blv6gphs8vh75"
 config/features=PackedStringArray("4.5", "GL Compatibility")
+boot_splash/bg_color=Color(0, 0, 0, 1)
 config/icon="res://icon.svg"
 
 [autoload]
@@ -31,6 +32,7 @@ enabled=PackedStringArray("res://addons/godot_super-wakatime/plugin.cfg", "res:/
 
 [gui]
 
+theme/custom="uid://cppri4egq7t21"
 theme/custom_font="uid://dlsy6eqqjygnf"
 
 [input]

@@ -1,20 +1,24 @@
-[gd_scene load_steps=17 format=4 uid="uid://caxp2b7ex8cv"]
+[gd_scene load_steps=22 format=4 uid="uid://caxp2b7ex8cv"]
 
 [ext_resource type="Script" uid="uid://b47mw1848x0om" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://c6mxq0nbt5wkt" path="res://textures/grass.png" id="2_iywne"]
+[ext_resource type="AudioStream" uid="uid://cjcw3ifebevon" path="res://sounds/pick_up.mp3" id="2_kvpfn"]
+[ext_resource type="AudioStream" uid="uid://cnmtbar1akbb4" path="res://sounds/place.mp3" id="3_dinhu"]
 [ext_resource type="Texture2D" uid="uid://cy004dl3uxk81" path="res://textures/tower_grass.png" id="3_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://l6ngi6rcjash" path="res://scenes/room.tscn" id="4_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://djr0mcdl31ejb" path="res://scenes/room_buy_button.tscn" id="5_iywne"]
 [ext_resource type="Texture2D" uid="uid://bj4xhrsgoxhfa" path="res://textures/selection_cursor.png" id="5_p57ef"]
+[ext_resource type="Theme" uid="uid://cppri4egq7t21" path="res://scenes/theme.tres" id="6_gee14"]
 [ext_resource type="Texture2D" uid="uid://dgn1ls66p6sjl" path="res://textures/bell.png" id="7_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://nxmp5wpmmhts" path="res://scenes/charm_buy_button.tscn" id="8_0tnpc"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kvpfn"]
 texture = ExtResource("2_iywne")
 texture_region_size = Vector2i(256, 256)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gee14"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dinhu"]
 texture = ExtResource("3_u5sy4")
 texture_region_size = Vector2i(256, 256)
 0:0/0 = 0
@@ -23,20 +27,14 @@ texture_region_size = Vector2i(256, 256)
 [sub_resource type="TileSet" id="TileSet_7jktm"]
 tile_size = Vector2i(256, 256)
 physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_fc0e3")
-sources/1 = SubResource("TileSetAtlasSource_gee14")
+sources/0 = SubResource("TileSetAtlasSource_kvpfn")
+sources/1 = SubResource("TileSetAtlasSource_dinhu")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p57ef"]
-bg_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
-shadow_color = Color(0, 0, 0, 0.29411766)
-
-[sub_resource type="Theme" id="Theme_u5sy4"]
-Panel/styles/panel = SubResource("StyleBoxFlat_p57ef")
+[sub_resource type="LabelSettings" id="LabelSettings_kvpfn"]
+font_size = 20
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+outline_size = 3
+outline_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_iywne"]
 font_size = 64
@@ -53,12 +51,29 @@ font_size = 32
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_0tnpc"]
+font_size = 72
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_vtaks"]
+font_size = 32
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_u5sy4"]
 a = Vector2(960, 0)
 b = Vector2(-960, 0)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_lbhrr")
+
+[node name="PickUp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_kvpfn")
+volume_db = -12.404
+pitch_scale = 1.1
+
+[node name="Place" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_dinhu")
+volume_db = -9.541
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_left = 2300.0
@@ -137,17 +152,16 @@ text = "[font_size=32]Plain Spikes[/font_size]
 It's quite plain."
 
 [node name="Shop" type="Panel" parent="UI/Control"]
-custom_minimum_size = Vector2(556, 160)
+custom_minimum_size = Vector2(904, 160)
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_top = -160.0
+offset_left = -452.0
+offset_right = 452.0
+offset_bottom = 160.0
 grow_horizontal = 2
-grow_vertical = 0
-theme = SubResource("Theme_u5sy4")
+theme = ExtResource("6_gee14")
 
 [node name="Scroll" type="ScrollContainer" parent="UI/Control/Shop"]
 layout_mode = 1
@@ -162,27 +176,114 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HBox" type="HBoxContainer" parent="UI/Control/Shop/Scroll"]
-custom_minimum_size = Vector2(512, 0)
+custom_minimum_size = Vector2(768, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RoomBuyButton" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+[node name="Control" type="Control" parent="UI/Control/Shop/Scroll/HBox"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Control/Shop/Scroll/HBox/Control"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = 64.0
+offset_right = 116.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5707964
+text = "ROOMS"
+label_settings = SubResource("LabelSettings_kvpfn")
+horizontal_alignment = 1
+
+[node name="Rooms" type="HBoxContainer" parent="UI/Control/Shop/Scroll/HBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RoomBuyButton" parent="UI/Control/Shop/Scroll/HBox/Rooms" instance=ExtResource("5_iywne")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="RoomBuyButton2" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+[node name="RoomBuyButton2" parent="UI/Control/Shop/Scroll/HBox/Rooms" instance=ExtResource("5_iywne")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="RoomBuyButton3" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+[node name="RoomBuyButton3" parent="UI/Control/Shop/Scroll/HBox/Rooms" instance=ExtResource("5_iywne")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="RoomBuyButton4" parent="UI/Control/Shop/Scroll/HBox" instance=ExtResource("5_iywne")]
+[node name="Control2" type="Control" parent="UI/Control/Shop/Scroll/HBox"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Control/Shop/Scroll/HBox/Control2"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = 64.0
+offset_right = 116.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5707964
+text = "CHARMS"
+label_settings = SubResource("LabelSettings_kvpfn")
+horizontal_alignment = 1
+
+[node name="Charms" type="HBoxContainer" parent="UI/Control/Shop/Scroll/HBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RoomBuyButton" parent="UI/Control/Shop/Scroll/HBox/Charms" instance=ExtResource("8_0tnpc")]
+layout_mode = 2
+
+[node name="RoomBuyButton2" parent="UI/Control/Shop/Scroll/HBox/Charms" instance=ExtResource("8_0tnpc")]
+layout_mode = 2
+
+[node name="Control3" type="Control" parent="UI/Control/Shop/Scroll/HBox"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Control/Shop/Scroll/HBox/Control3"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = 64.0
+offset_right = 116.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5707964
+text = "DIPLOMACY"
+label_settings = SubResource("LabelSettings_kvpfn")
+horizontal_alignment = 1
+
+[node name="Diplomacy" type="HBoxContainer" parent="UI/Control/Shop/Scroll/HBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RoomBuyButton" parent="UI/Control/Shop/Scroll/HBox/Diplomacy" instance=ExtResource("5_iywne")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -228,13 +329,119 @@ anchors_preset = -1
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 256.0
-offset_top = -63.5
+offset_top = -32.0
 offset_right = 1.0
 offset_bottom = 63.5
 grow_vertical = 2
+text = "if ur reading this uhhhhh bingus"
 label_settings = SubResource("LabelSettings_u5sy4")
-vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="Pillaged" type="Panel" parent="UI/Control"]
+visible = false
+custom_minimum_size = Vector2(480, 480)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/Control/Pillaged"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Control/Pillaged/VBox"]
+layout_mode = 2
+text = "PILLAGED!"
+label_settings = SubResource("LabelSettings_0tnpc")
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="UI/Control/Pillaged/VBox"]
+layout_mode = 2
+text = "Gold collected: %s
+Rooms placed: %s
+Total kills: %s
+"
+label_settings = SubResource("LabelSettings_vtaks")
+horizontal_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/Control/Pillaged"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Restart" type="Button" parent="UI/Control/Pillaged/HBox"]
+layout_mode = 2
+text = " Restart "
+
+[node name="MainMenu" type="Button" parent="UI/Control/Pillaged/HBox"]
+layout_mode = 2
+text = " Return to Main Menu"
+
+[node name="Paused" type="Panel" parent="UI/Control"]
+visible = false
+custom_minimum_size = Vector2(480, 480)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/Control/Paused"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Control/Paused/VBox"]
+layout_mode = 2
+text = "PAUSED"
+label_settings = SubResource("LabelSettings_0tnpc")
+horizontal_alignment = 1
+
+[node name="Restart" type="Button" parent="UI/Control/Paused/VBox"]
+layout_mode = 2
+text = " Restart "
+
+[node name="MainMenu" type="Button" parent="UI/Control/Paused/VBox"]
+layout_mode = 2
+text = " Return to Main Menu"
 
 [node name="Blocker" type="Area2D" parent="."]
 position = Vector2(2768, -3692)
@@ -248,4 +455,10 @@ position = Vector2(4897, -3692)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Blocker2"]
 shape = SubResource("SegmentShape2D_u5sy4")
 
+[connection signal="mouse_entered" from="UI/Control/Shop" to="." method="_on_shop_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Control/Shop" to="." method="_on_shop_mouse_exited"]
 [connection signal="pressed" from="UI/Control/StartWave" to="." method="_on_start_wave_pressed"]
+[connection signal="pressed" from="UI/Control/Pillaged/HBox/Restart" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="UI/Control/Pillaged/HBox/MainMenu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="UI/Control/Paused/VBox/Restart" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="UI/Control/Paused/VBox/MainMenu" to="." method="_on_main_menu_pressed"]

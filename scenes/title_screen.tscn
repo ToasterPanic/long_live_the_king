@@ -1,0 +1,279 @@
+[gd_scene load_steps=13 format=4 uid="uid://blv6gphs8vh75"]
+
+[ext_resource type="Texture2D" uid="uid://c6mxq0nbt5wkt" path="res://textures/grass.png" id="1_3yumr"]
+[ext_resource type="Script" uid="uid://bi4s2wgn05a2q" path="res://scripts/title_screen.gd" id="1_dc4i4"]
+[ext_resource type="Texture2D" uid="uid://dvnvnplc6ehbp" path="res://textures/hill.png" id="1_mgrm8"]
+[ext_resource type="Texture2D" uid="uid://cy004dl3uxk81" path="res://textures/tower_grass.png" id="2_cs5ya"]
+[ext_resource type="Texture2D" uid="uid://38i25twl24jl" path="res://textures/title_screen_tower.png" id="3_mykxm"]
+[ext_resource type="PackedScene" uid="uid://bo4fdki5edm85" path="res://scenes/settings.tscn" id="6_e54dn"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mynnq"]
+texture = ExtResource("1_3yumr")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e8tpv"]
+texture = ExtResource("2_cs5ya")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
+
+[sub_resource type="TileSet" id="TileSet_4qe4i"]
+tile_size = Vector2i(256, 256)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_mynnq")
+sources/1 = SubResource("TileSetAtlasSource_e8tpv")
+
+[sub_resource type="LabelSettings" id="LabelSettings_mgrm8"]
+font_size = 96
+
+[sub_resource type="LabelSettings" id="LabelSettings_dc4i4"]
+font_size = 64
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_e54dn"]
+font_size = 22
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+
+[node name="TitleScreen" type="Node2D"]
+script = ExtResource("1_dc4i4")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(-670, 260)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D8" type="Sprite2D" parent="."]
+position = Vector2(1223, 255)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(-323, 299)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D5" type="Sprite2D" parent="."]
+position = Vector2(357, 255)
+rotation = 3.1415927
+scale = Vector2(1, -1)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D6" type="Sprite2D" parent="."]
+position = Vector2(858, 312)
+rotation = 3.1415927
+scale = Vector2(1, -1)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D7" type="Sprite2D" parent="."]
+position = Vector2(-1095, 252)
+rotation = 3.1415927
+scale = Vector2(1, -1)
+texture = ExtResource("1_mgrm8")
+
+[node name="Sprite2D4" type="Sprite2D" parent="."]
+position = Vector2(-19, 273)
+scale = Vector2(-1, 1)
+texture = ExtResource("1_mgrm8")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+position = Vector2(3776, -3798)
+scale = Vector2(0.5, 0.5)
+tile_map_data = PackedByteArray("AADV/yAAAAAAAAAAAADW/yAAAAAAAAAAAADX/yAAAAAAAAAAAADY/yAAAAAAAAAAAADZ/yAAAAAAAAAAAADa/yAAAAAAAAAAAADb/yAAAAAAAAAAAADc/yAAAAAAAAAAAADd/yAAAAAAAAAAAADe/yAAAAAAAAAAAADf/yAAAAAAAAAAAADg/yAAAAAAAAAAAADh/yAAAAAAAAAAAADi/yAAAAAAAAAAAADj/yAAAAAAAAAAAADk/yAAAAAAAAAAAADl/yAAAAAAAAAAAADm/yAAAAAAAAAAAADn/yAAAAAAAAAAAADo/yAAAAAAAAAAAADp/yAAAAAAAAAAAADq/yAAAAAAAAAAAADr/yAAAAAAAAAAAADs/yAAAAAAAAAAAADt/yAAAAAAAAAAAADu/yAAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_4qe4i")
+
+[node name="ColorRect" type="ColorRect" parent="TileMapLayer"]
+offset_left = -12254.0
+offset_top = 8446.0
+offset_right = -2255.0
+offset_bottom = 18445.0
+color = Color(0.3137255, 0.23921569, 0.09803922, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(570, 14)
+scale = Vector2(0.666, 0.666)
+texture = ExtResource("3_mykxm")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 2000)
+limit_enabled = false
+position_smoothing_enabled = true
+position_smoothing_speed = 4.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="FadeToBlack" type="ColorRect" parent="UI/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5411765)
+
+[node name="VBox" type="VBoxContainer" parent="UI/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Control/VBox"]
+layout_mode = 2
+text = "Long Live the King!"
+label_settings = SubResource("LabelSettings_mgrm8")
+
+[node name="ButtonHolder" type="Control" parent="UI/Control/VBox"]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+
+[node name="NewGame" type="Button" parent="UI/Control/VBox/ButtonHolder"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -19.5
+offset_right = 128.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "New Game"
+
+[node name="ButtonHolder2" type="Control" parent="UI/Control/VBox"]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+
+[node name="Settings" type="Button" parent="UI/Control/VBox/ButtonHolder2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -19.5
+offset_right = 128.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Settings"
+
+[node name="ButtonHolder3" type="Control" parent="UI/Control/VBox"]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+
+[node name="CreditsExtras" type="Button" parent="UI/Control/VBox/ButtonHolder3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -19.5
+offset_right = 128.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Credits & Extras"
+
+[node name="ButtonHolder4" type="Control" parent="UI/Control/VBox"]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+
+[node name="Quit" type="Button" parent="UI/Control/VBox/ButtonHolder4"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -19.5
+offset_right = 128.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Quit"
+
+[node name="Settings" parent="UI/Control" instance=ExtResource("6_e54dn")]
+layout_mode = 1
+offset_left = -240.0
+offset_top = -240.0
+offset_right = 240.0
+offset_bottom = 240.0
+
+[node name="CreditsExtras" type="Panel" parent="UI/Control"]
+custom_minimum_size = Vector2(480, 480)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/Control/CreditsExtras"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Control/CreditsExtras/VBox"]
+layout_mode = 2
+text = "CREDITS"
+label_settings = SubResource("LabelSettings_dc4i4")
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="UI/Control/CreditsExtras/VBox"]
+layout_mode = 2
+text = "I'm actually proud of this project, which is a nice change of pace from the last few weeks of Siege. This is probably a project I will finish later, but I think that its current state is pretty solid.
+
+- Some sound effects taken from LittleBigPlanet
+- \"Place\" by marsllzent (Freesound) on Pixabay
+- Meeple character by the artists of Siege"
+label_settings = SubResource("LabelSettings_e54dn")
+autowrap_mode = 2
+
+[node name="BackToHome" type="Button" parent="UI/Control/CreditsExtras"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -37.0
+offset_top = -39.0
+offset_right = 37.0
+grow_horizontal = 2
+grow_vertical = 0
+text = " Close "
+
+[connection signal="pressed" from="UI/Control/VBox/ButtonHolder/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="UI/Control/VBox/ButtonHolder2/Settings" to="." method="_on_settings_pressed"]
