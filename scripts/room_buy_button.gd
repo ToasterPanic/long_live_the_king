@@ -9,11 +9,32 @@ var bought = false
 
 var hovered = false
 
+var tooltip_scene = preload("res://scenes/tooltip.tscn")
+var tooltip = null
+
 func _on_mouse_entered() -> void:
 	hovered = true
+	
+	tooltip = tooltip_scene.instantiate()
+	#tooltip.global_position = get_viewport().get_mouse_position()
+	tooltip.position = get_viewport().get_mouse_position()#Vector2(0, 0)
+	
+	tooltip.get_node("Label").text = """[font_size=28]%s %s[/font_size]
+%-1d base damage per second
+	
+%s""" % [
+		global.wallpaper_stats[wallpaper].name,
+		global.room_stats[room].name,
+		floori(global.room_stats[room].damage),
+		global.wallpaper_stats[wallpaper].stat_description
+	]
+	
+	get_parent().get_parent().get_parent().get_parent().get_parent().add_child(tooltip)
 
 func _on_mouse_exited() -> void:
 	hovered = false
+	if tooltip:
+		tooltip.queue_free()
 
 func _ready() -> void:
 	$Label.text = " $" + str(cost)
@@ -37,6 +58,10 @@ func _ready() -> void:
 		game = game.get_parent()
 
 func _process(delta: float) -> void:
+	if tooltip:
+		tooltip.position = get_viewport().get_mouse_position()
+		tooltip.position.y -= tooltip.size.y
+	
 	if bought:
 		modulate = Color(0.2, 0.2, 0.2)
 		$Room.visible = false
@@ -61,8 +86,10 @@ func _on_button_down() -> void:
 		new_room.modulate = Color(0, 1, 0, 1)
 		
 		game.selected_room = new_room
-		game.tower_invalid = true
-		game.failures.push_front("RoomBought")
+		game.selection_mode = game.SELECTION_MODE_GRAB
+		game.deselect_cooldown = 0.1
+		#game.tower_invalid = true
+		#g#ame.failures.push_front("RoomBought")
 		
 		bought = true
 		cost = INF

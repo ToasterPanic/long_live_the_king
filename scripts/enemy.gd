@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 		
 		for n in $InsideCheck.get_overlapping_areas():
 			if (n.get_name() == "Area") and (n.get_parent().get_name() == "King"):
-				game.gold -= 1
+				game.gold -= 2
 				queue_free()
 	
 	move_and_slide()

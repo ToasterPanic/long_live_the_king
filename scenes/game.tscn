@@ -1,6 +1,7 @@
-[gd_scene load_steps=22 format=4 uid="uid://caxp2b7ex8cv"]
+[gd_scene load_steps=23 format=4 uid="uid://caxp2b7ex8cv"]
 
 [ext_resource type="Script" uid="uid://b47mw1848x0om" path="res://scripts/game.gd" id="1_lbhrr"]
+[ext_resource type="AudioStream" uid="uid://dcij28uecnyn1" path="res://sounds/goofy.mp3" id="2_dinhu"]
 [ext_resource type="Texture2D" uid="uid://c6mxq0nbt5wkt" path="res://textures/grass.png" id="2_iywne"]
 [ext_resource type="AudioStream" uid="uid://cjcw3ifebevon" path="res://sounds/pick_up.mp3" id="2_kvpfn"]
 [ext_resource type="AudioStream" uid="uid://cnmtbar1akbb4" path="res://sounds/place.mp3" id="3_dinhu"]
@@ -30,16 +31,17 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_kvpfn")
 sources/1 = SubResource("TileSetAtlasSource_dinhu")
 
+[sub_resource type="LabelSettings" id="LabelSettings_iywne"]
+font_size = 56
+font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+outline_size = 8
+outline_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_kvpfn"]
 font_size = 20
 font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 outline_size = 3
 outline_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_iywne"]
-font_size = 64
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_gee14"]
 font_size = 48
@@ -65,6 +67,12 @@ b = Vector2(-960, 0)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_lbhrr")
+
+[node name="Goofy" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("2_dinhu")
+autoplay = true
+parameters/looping = true
 
 [node name="PickUp" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_kvpfn")
@@ -123,44 +131,48 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="RoomInfo" type="Panel" parent="UI/Control"]
-visible = false
-custom_minimum_size = Vector2(256, 256)
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -128.0
-offset_right = 256.0
-offset_bottom = 128.0
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="Label" type="RichTextLabel" parent="UI/Control/RoomInfo"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-grow_horizontal = 2
-grow_vertical = 2
-bbcode_enabled = true
-text = "[font_size=32]Plain Spikes[/font_size]
-It's quite plain."
-
-[node name="Shop" type="Panel" parent="UI/Control"]
-custom_minimum_size = Vector2(904, 160)
+[node name="InfoPanel" type="Panel" parent="UI/Control"]
+custom_minimum_size = Vector2(544, 104)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -452.0
-offset_right = 452.0
-offset_bottom = 160.0
+offset_left = -272.0
+offset_right = 272.0
+offset_bottom = 104.0
 grow_horizontal = 2
+theme = ExtResource("6_gee14")
+
+[node name="HBox" type="HBoxContainer" parent="UI/Control/InfoPanel"]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 528.0
+offset_bottom = 88.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Gold" type="Label" parent="UI/Control/InfoPanel/HBox"]
+layout_mode = 2
+text = "22 GOLD"
+label_settings = SubResource("LabelSettings_iywne")
+horizontal_alignment = 1
+
+[node name="Shop" type="Panel" parent="UI/Control"]
+custom_minimum_size = Vector2(904, 160)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -452.0
+offset_top = -160.0
+offset_right = 452.0
+grow_horizontal = 2
+grow_vertical = 0
 theme = ExtResource("6_gee14")
 
 [node name="Scroll" type="ScrollContainer" parent="UI/Control/Shop"]
@@ -288,19 +300,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Gold" type="Label" parent="UI/Control"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
-grow_horizontal = 2
-text = "22 GOLD"
-label_settings = SubResource("LabelSettings_iywne")
-horizontal_alignment = 1
-
 [node name="StartWave" type="TextureButton" parent="UI/Control"]
 layout_mode = 0
 offset_right = 40.0
@@ -338,6 +337,7 @@ label_settings = SubResource("LabelSettings_u5sy4")
 autowrap_mode = 2
 
 [node name="Pillaged" type="Panel" parent="UI/Control"]
+process_mode = 3
 visible = false
 custom_minimum_size = Vector2(480, 480)
 layout_mode = 1
@@ -455,6 +455,8 @@ position = Vector2(4897, -3692)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Blocker2"]
 shape = SubResource("SegmentShape2D_u5sy4")
 
+[connection signal="mouse_entered" from="UI/Control/InfoPanel" to="." method="_on_shop_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Control/InfoPanel" to="." method="_on_shop_mouse_exited"]
 [connection signal="mouse_entered" from="UI/Control/Shop" to="." method="_on_shop_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Control/Shop" to="." method="_on_shop_mouse_exited"]
 [connection signal="pressed" from="UI/Control/StartWave" to="." method="_on_start_wave_pressed"]

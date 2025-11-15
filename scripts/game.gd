@@ -10,6 +10,10 @@ var tower_invalid = false
 var failures = []
 var clock = 0
 
+var charms = []
+
+var deselect_cooldown = 0
+
 var mouse_busy = false
 
 const SELECTION_MODE_DEFAULT = 0
@@ -163,14 +167,25 @@ func scramble_shop():
 		i += 1
 		
 	i = 0
-	while i < 2:
-		var charm_buy_button = charm_buy_button_scene.instantiate()
+	if charms.has("carpentry"):
+		while i < 2:
+			var room_buy_button = room_buy_button_scene.instantiate()
 		
-		charm_buy_button.charm = charm_randomized_table[randi_range(0, charm_randomized_table.size() - 1)]
+			room_buy_button.room = room_randomized_table[randi_range(0, room_randomized_table.size() - 1)]
+			room_buy_button.wallpaper = wallpaper_randomized_table[randi_range(0, wallpaper_randomized_table.size() - 1)]
+			
+			$UI/Control/Shop/Scroll/HBox/Charms.add_child(room_buy_button)
+			
+			i += 1
+	else:
+		while i < 2:
+			var charm_buy_button = charm_buy_button_scene.instantiate()
+			
+			charm_buy_button.charm = charm_randomized_table[randi_range(0, charm_randomized_table.size() - 1)]
 
-		$UI/Control/Shop/Scroll/HBox/Charms.add_child(charm_buy_button)
-		
-		i += 1
+			$UI/Control/Shop/Scroll/HBox/Charms.add_child(charm_buy_button)
+			
+			i += 1
 
 func _ready() -> void:
 	LimboConsole.register_command(add_gold)
@@ -193,7 +208,7 @@ func _process(delta: float) -> void:
 	$Cursor.position.x = (roundi(get_global_mouse_position().x + 64) / 128) * 128 
 	$Cursor.position.y = (roundi(get_global_mouse_position().y - 64) / 128) * 128
 	
-	$UI/Control/Gold.text = str(gold) + " GOLD"
+	$UI/Control/InfoPanel/HBox/Gold.text = str(gold) + " GOLD"
 	
 	if Input.is_action_just_pressed("select"):
 		for n in $Rooms.get_children():
@@ -202,36 +217,43 @@ func _process(delta: float) -> void:
 				$PickUp.play()
 	elif Input.is_action_pressed("select"):
 		if selection_mode == SELECTION_MODE_GRAB:
+			deselect_cooldown -= delta
+			
 			selected_room.get_node("Room").rotation_degrees = sin(clock * 12) * 15
 			selected_room.get_node("Wallpaper").rotation = selected_room.get_node("Room").rotation
 			
 			if selected_room.get_node("Wallpaper").global_position != get_global_mouse_position():
-				selected_room.position = $Cursor.position
 				
 				selected_room.get_node("Wallpaper").global_position = get_global_mouse_position()
 				selected_room.get_node("Room").global_position = get_global_mouse_position()
 				
-				selected_room.invalid = !is_valid_room_position(selected_room)
-				
-				# Since Area2Ds only update on physics steps, we must wait
-				await get_tree().physics_frame
-				await get_tree().physics_frame
-				
-				tower_invalid = false
-				
-				failures = []
-				
-				for n in $Rooms.get_children():
-					var check = is_valid_room_position(n, true)
-					n.invalid = typeof(check) != typeof(false)
+				if selected_room.position != $Cursor.position:
+					selected_room.position = $Cursor.position
 					
-					if n.invalid:
-						n.modulate = Color(1, 0.4, 0.4, 1)
-						tower_invalid = true
+					selected_room.get_node("Wallpaper").global_position = get_global_mouse_position()
+					selected_room.get_node("Room").global_position = get_global_mouse_position()
+					
+					selected_room.invalid = !is_valid_room_position(selected_room)
+					
+					# Since Area2Ds only update on physics steps, we must wait
+					await get_tree().physics_frame
+					await get_tree().physics_frame
+					
+					tower_invalid = false
+					
+					failures = []
+					
+					for n in $Rooms.get_children():
+						var check = is_valid_room_position(n, true)
+						n.invalid = typeof(check) != typeof(false)
 						
-						failures.push_front(check)
-					else:
-						n.modulate = Color(1.4, 1.4, 1.4, 1)
+						if n.invalid:
+							n.modulate = Color(1, 0.4, 0.4, 1)
+							tower_invalid = true
+							
+							failures.push_front(check)
+						else:
+							n.modulate = Color(1.4, 1.4, 1.4, 1)
 				
 				
 		if selected_room and selected_room.hovered and not active_wave:
@@ -246,7 +268,7 @@ func _process(delta: float) -> void:
 			selected_room.get_node("Room").position = Vector2()
 			selected_room.get_node("Room").rotation = 0
 			
-			if selection_mode == SELECTION_MODE_GRAB:
+			if (selection_mode == SELECTION_MODE_GRAB) and (deselect_cooldown <= 0):
 				selection_mode = SELECTION_MODE_DEFAULT
 				$PickUp.stop()
 				$Place.play()
@@ -285,6 +307,10 @@ func _process(delta: float) -> void:
 		
 	next_spawn -= delta 
 	
+	if gold < 0:
+		get_tree().paused = true
+		$UI/Control/Pillaged.visible = true 
+	
 	if active_wave:
 		if current_wave_spawned > 5:
 			if $Enemies.get_children().size() == 0:
@@ -294,6 +320,10 @@ func _process(delta: float) -> void:
 				current_wave_spawned = 0
 				
 				gold += 5 + floori(wave / 3)
+				
+				for n in charms:
+					if n == "gold":
+						gold += 2
 				
 				$UI/Control/Shop.visible = true
 				
@@ -316,9 +346,13 @@ func _process(delta: float) -> void:
 			else:
 				enemy.direction = -1
 				enemy.position = $SpawnRight.position
+				
+			if wave > 2:
+				var items = ["none", "none", "blunt", "fire", "magic"]
+				enemy.damage_vulnerability = items[randi_range(0, items.size() - 1)]
 			
 			# No idea how to square a float. Don't feel like figuring it out
-			var unsquared = (((wave - 1) + 1.25) / 1.25)
+			var unsquared = (((wave - 1) + 1.75) / 1.75)
 			var multiplier = unsquared * unsquared
 			
 			enemy.health = 1 * multiplier
@@ -341,11 +375,11 @@ func _on_start_wave_pressed() -> void:
 
 
 func _on_main_menu_pressed() -> void:
-	pass # Replace with function body.
+	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
 
 
 func _on_restart_pressed() -> void:
-	pass # Replace with function body.
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
 func _on_shop_mouse_entered() -> void:

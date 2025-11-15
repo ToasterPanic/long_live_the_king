@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cppri4egq7t21"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://cppri4egq7t21"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ux8hm"]
 bg_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
@@ -38,6 +38,21 @@ border_width_bottom = 4
 border_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 shadow_color = Color(0, 0, 0, 0.29411766)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nx7ni"]
+bg_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+expand_margin_left = 8.0
+expand_margin_top = 8.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.29411766)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ux8hm"]
+
 [resource]
 Button/colors/font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 Button/colors/font_disabled_color = Color(0.23137255, 0.16470589, 0.101960786, 0.6862745)
@@ -48,3 +63,6 @@ Button/styles/focus = SubResource("StyleBoxEmpty_nx7ni")
 Button/styles/hover = SubResource("StyleBoxFlat_jm5n4")
 Button/styles/normal = SubResource("StyleBoxFlat_w4svv")
 Panel/styles/panel = SubResource("StyleBoxFlat_p57ef")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_nx7ni")
+RichTextLabel/colors/default_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+TooltipPanel/styles/panel = SubResource("StyleBoxEmpty_ux8hm")

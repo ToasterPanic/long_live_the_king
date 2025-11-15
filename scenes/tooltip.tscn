@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://bx8njxxrix6l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pvr4a"]
+bg_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
+shadow_color = Color(0, 0, 0, 0.29411766)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7dicn"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[node name="Tooltip" type="PanelContainer"]
+z_index = 99
+z_as_relative = false
+custom_minimum_size = Vector2(256, 0)
+offset_left = 329.0
+offset_top = 141.0
+offset_right = 585.0
+offset_bottom = 211.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pvr4a")
+
+[node name="Label" type="RichTextLabel" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_7dicn")
+bbcode_enabled = true
+text = "[font_size=32]Plain Spikes[/font_size]
+It's quite plain."
+fit_content = true

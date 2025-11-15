@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=4 uid="uid://blv6gphs8vh75"]
+[gd_scene load_steps=14 format=4 uid="uid://blv6gphs8vh75"]
 
 [ext_resource type="Texture2D" uid="uid://c6mxq0nbt5wkt" path="res://textures/grass.png" id="1_3yumr"]
 [ext_resource type="Script" uid="uid://bi4s2wgn05a2q" path="res://scripts/title_screen.gd" id="1_dc4i4"]
 [ext_resource type="Texture2D" uid="uid://dvnvnplc6ehbp" path="res://textures/hill.png" id="1_mgrm8"]
+[ext_resource type="AudioStream" uid="uid://d3fs7wo74ygql" path="res://sounds/title.mp3" id="2_3yumr"]
 [ext_resource type="Texture2D" uid="uid://cy004dl3uxk81" path="res://textures/tower_grass.png" id="2_cs5ya"]
 [ext_resource type="Texture2D" uid="uid://38i25twl24jl" path="res://textures/title_screen_tower.png" id="3_mykxm"]
 [ext_resource type="PackedScene" uid="uid://bo4fdki5edm85" path="res://scenes/settings.tscn" id="6_e54dn"]
@@ -27,6 +28,9 @@ sources/1 = SubResource("TileSetAtlasSource_e8tpv")
 
 [sub_resource type="LabelSettings" id="LabelSettings_mgrm8"]
 font_size = 96
+font_color = Color(0.7764706, 0.6431373, 0.49411765, 1)
+outline_size = 8
+outline_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_dc4i4"]
 font_size = 64
@@ -38,6 +42,12 @@ font_color = Color(0.23137255, 0.16470589, 0.101960786, 1)
 
 [node name="TitleScreen" type="Node2D"]
 script = ExtResource("1_dc4i4")
+
+[node name="Title" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_3yumr")
+volume_db = -6.0
+autoplay = true
+parameters/looping = true
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
 position = Vector2(-670, 260)
@@ -212,6 +222,7 @@ grow_vertical = 2
 text = "Quit"
 
 [node name="Settings" parent="UI/Control" instance=ExtResource("6_e54dn")]
+visible = false
 layout_mode = 1
 offset_left = -240.0
 offset_top = -240.0
@@ -219,6 +230,7 @@ offset_right = 240.0
 offset_bottom = 240.0
 
 [node name="CreditsExtras" type="Panel" parent="UI/Control"]
+visible = false
 custom_minimum_size = Vector2(480, 480)
 layout_mode = 1
 anchors_preset = 8
@@ -257,7 +269,9 @@ text = "I'm actually proud of this project, which is a nice change of pace from 
 
 - Some sound effects taken from LittleBigPlanet
 - \"Place\" by marsllzent (Freesound) on Pixabay
-- Meeple character by the artists of Siege"
+- Meeple character by the artists of Siege
+- Title music by Tunetank from Pixabay
+- In-game music by Chimimin from Pixabay"
 label_settings = SubResource("LabelSettings_e54dn")
 autowrap_mode = 2
 
@@ -277,3 +291,5 @@ text = " Close "
 
 [connection signal="pressed" from="UI/Control/VBox/ButtonHolder/NewGame" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="UI/Control/VBox/ButtonHolder2/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="UI/Control/VBox/ButtonHolder3/CreditsExtras" to="." method="_on_credits_extras_pressed"]
+[connection signal="pressed" from="UI/Control/CreditsExtras/BackToHome" to="." method="_on_back_to_home_pressed"]
